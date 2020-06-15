@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Project Information -->
+    <groupId>io.matthewp.ipwhitelist</groupId>
+    <artifactId>ipwhitelist</artifactId>
+    <version>1.0.1</version>
+    <packaging>jar</packaging>
+    <!-- END Project Information -->
+
+    <!-- Properties -->
+    <properties>
+        <project.displayName>IPWhitelist</project.displayName>
+        <project.main>${project.groupId}.${project.displayName}</project.main>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    <!-- END Properties -->
+
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- Spigot -->
+        <dependency>
+            <groupId>org.github.paperspigot</groupId>
+            <artifactId>paperspigot</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.github.paperspigot</groupId>
+            <artifactId>paperspigot-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- END Spigot -->
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- END Lombok -->
+    </dependencies>
+    <!-- END Dependencies -->
+
+    <!-- Build Configuration -->
+    <build>
+        <finalName>${project.displayName}</finalName>
+        <defaultGoal>clean install</defaultGoal>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+
+        <!-- Resources -->
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>*</include>
+                </includes>
+            </resource>
+        </resources>
+        <!-- Resources -->
+
+        <!-- Plugins -->
+        <plugins>
+            <!-- Git Plugin -->
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.2.6</version>
+
+                <!-- Executions -->
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+
+                        <!-- Goals -->
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <!-- END Goals -->
+                    </execution>
+                </executions>
+                <!-- END Executions -->
+
+                <!-- Configuration -->
+                <configuration>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                </configuration>
+                <!-- END Configuration -->
+            </plugin>
+            <!-- END Git Plugin -->
+
+            <!-- Compiler Plugin -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+
+                <!-- Configuration -->
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+                <!-- Configuration -->
+            </plugin>
+            <!-- END Compiler Plugin -->
+
+            <!-- Shade Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+
+                <!-- Executions -->
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+
+                        <!-- Goals -->
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <!-- END Goals -->
+
+                        <!-- Configuration -->
+                        <configuration>
+                            <!-- Relocations -->
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.apache.commons.pool2</pattern>
+                                    <shadedPattern>${project.groupId}.lib.org.apache.commons.pool2</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.bson</pattern>
+                                    <shadedPattern>${project.groupId}.lib.org.bson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>${project.groupId}.lib.org.slf4j</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>redis.clients</pattern>
+                                    <shadedPattern>${project.groupId}.lib.redis.clients</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.gson</pattern>
+                                    <shadedPattern>${project.groupId}.lib.com.google.gson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.mongodb</pattern>
+                                    <shadedPattern>${project.groupId}.lib.com.mongodb</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <!-- END Relocations -->
+                        </configuration>
+                        <!-- END Configuration -->
+                    </execution>
+                </executions>
+                <!-- END Executions -->
+            </plugin>
+            <!-- END Shade Plugin -->
+
+            <!-- Resources Plugin -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+
+                <!-- Executions -->
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>install</phase>
+
+                        <!-- Goals -->
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <!-- END Goals -->
+
+                        <!-- Configuration -->
+                        <configuration>
+                            <outputDirectory>${basedir}/../.builds/</outputDirectory>
+
+                            <!-- Resources -->
+                            <resources>
+                                <resource>
+                                    <filtering>false</filtering>
+                                    <directory>${basedir}/target/</directory>
+
+                                    <includes>
+                                        <include>${project.displayName}.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <!-- END Resources -->
+                        </configuration>
+                        <!-- END Configuration -->
+                    </execution>
+                </executions>
+                <!-- END Executions -->
+            </plugin>
+            <!-- END Resources Plugin -->
+        </plugins>
+        <!-- Plugins -->
+    </build>
+    <!-- END Build Configuration -->
+</project>
